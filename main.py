@@ -5,6 +5,7 @@ from PyQt5 import QtCore, QtWidgets
 
 from ExactSolution import ExactSolution
 from Euler import Euler
+from ImprovedEuler import ImprovedEuler
 
 
 class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
@@ -18,21 +19,34 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         # checkboxes changing
         self.solution.stateChanged.connect(self.displaySolutionGraph)
         self.euler.stateChanged.connect(self.displayEulerGraph)
+        self.improvedEuler.stateChanged.connect(self.displayImprovedEulerGraph)
+
 
         # text boxes changing
         self.x0_var.textChanged.connect(self.updateSolutionGraph)
         self.x0_var.textChanged.connect(self.updateEulerGraph)
+        self.x0_var.textChanged.connect(self.updateImprovedEulerGraph)
+
         self.y0_var.textChanged.connect(self.updateSolutionGraph)
         self.y0_var.textChanged.connect(self.updateEulerGraph)
+        self.y0_var.textChanged.connect(self.updateImprovedEulerGraph)
+
         self.n_var.textChanged.connect(self.updateEulerGraph)
+        self.n_var.textChanged.connect(self.updateImprovedEulerGraph)
+
         self.b_var.textChanged.connect(self.updateEulerGraph)
         self.b_var.textChanged.connect(self.updateSolutionGraph)
+        self.b_var.textChanged.connect(self.updateImprovedEulerGraph)
+
 
     def setGraphs(self):
         exactSolution = ExactSolution(self.x0_var.text(), self.y0_var.text(), self.b_var.text())
         self.solution_graph = self.graphWidget1.plot(exactSolution.x, exactSolution.y)
         eulerGraph = Euler(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text())
         self.eulerGraph = self.graphWidget1.plot(eulerGraph.x, eulerGraph.y)
+        improvedEulerGraph  = ImprovedEuler(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text())
+        self.improvedEulerGraph = self.graphWidget1.plot(improvedEulerGraph.x, improvedEulerGraph.y)
+
 
     def setWidgets(self):
         vBox1 = self.verticalLayout_pg1
@@ -70,9 +84,16 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         if (self.euler.isChecked()):
             self.eulerGraph = self.graphWidget1.plot(eulerGraph.x, eulerGraph.y)
 
+    def updateImprovedEulerGraph(self):
+        exactSolution = ExactSolution(self.x0_var.text(), self.y0_var.text(), self.b_var.text())
+        improvedEulerGraph = ImprovedEuler(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text())
+        self.improvedEulerGraph.clear()
+        if (self.euler.isChecked()):
+            self.improvedEulerGraph = self.graphWidget1.plot(improvedEulerGraph.x, improvedEulerGraph.y)
+
     def displaySolutionGraph(self):
         if self.solution.isChecked():
-            self.updateFirstGraph()
+            self.updateSolutionGraph()
             self.solution_graph.show()
         else:
             self.solution_graph.hide()
@@ -83,6 +104,13 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             self.eulerGraph.show()
         else:
             self.eulerGraph.hide()
+
+    def displayImprovedEulerGraph(self):
+        if self.improvedEuler.isChecked():
+            self.updateImprovedEulerGraph()
+            self.improvedEulerGraph.show()
+        else:
+            self.improvedEulerGraph.hide()
 
 
 def main():
