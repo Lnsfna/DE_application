@@ -1,13 +1,13 @@
-
 import pyqtgraph as pg
 import design
 import sys
 from PyQt5 import QtCore, QtWidgets
 
 from ExactSolution import ExactSolution
+from Euler import Euler
+
 
 class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
-
 
     def __init__(self):
         super().__init__()
@@ -15,14 +15,24 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.setWidgets()
         self.setGraphs()
 
-        self.solution.stateChanged.connect(self.displaySolution)
-        self.x0_var.textChanged.connect(self.updateFirstGraph)
-        self.y0_var.textChanged.connect(self.updateFirstGraph)
+        # checkboxes changing
+        self.solution.stateChanged.connect(self.displaySolutionGraph)
+        self.euler.stateChanged.connect(self.displayEulerGraph)
 
+        # text boxes changing
+        self.x0_var.textChanged.connect(self.updateSolutionGraph)
+        self.x0_var.textChanged.connect(self.updateEulerGraph)
+        self.y0_var.textChanged.connect(self.updateSolutionGraph)
+        self.y0_var.textChanged.connect(self.updateEulerGraph)
+        self.n_var.textChanged.connect(self.updateEulerGraph)
+        self.b_var.textChanged.connect(self.updateEulerGraph)
+        self.b_var.textChanged.connect(self.updateSolutionGraph)
 
     def setGraphs(self):
-        exactSolution =ExactSolution(self.x0_var.text(), self.y0_var.text())
+        exactSolution = ExactSolution(self.x0_var.text(), self.y0_var.text(), self.b_var.text())
         self.solution_graph = self.graphWidget1.plot(exactSolution.x, exactSolution.y)
+        eulerGraph = Euler(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text())
+        self.eulerGraph = self.graphWidget1.plot(eulerGraph.x, eulerGraph.y)
 
     def setWidgets(self):
         vBox1 = self.verticalLayout_pg1
@@ -47,18 +57,32 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.improvedEuler_error.setChecked(True)
         self.rungeKutta_error.setChecked(True)
 
-    def updateFirstGraph(self):
-        exactSolution = ExactSolution(self.x0_var.text(), self.y0_var.text())
+    def updateSolutionGraph(self):
+        exactSolution = ExactSolution(self.x0_var.text(), self.y0_var.text(), self.b_var.text())
         self.solution_graph.clear()
-        self.solution_graph = self.graphWidget1.plot(exactSolution.x, exactSolution.y)
+        if (self.solution.isChecked()):
+            self.solution_graph = self.graphWidget1.plot(exactSolution.x, exactSolution.y)
 
-    def displaySolution(self):
+    def updateEulerGraph(self):
+        exactSolution = ExactSolution(self.x0_var.text(), self.y0_var.text(), self.b_var.text())
+        eulerGraph = Euler(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text())
+        self.eulerGraph.clear()
+        if (self.euler.isChecked()):
+            self.eulerGraph = self.graphWidget1.plot(eulerGraph.x, eulerGraph.y)
+
+    def displaySolutionGraph(self):
         if self.solution.isChecked():
             self.updateFirstGraph()
             self.solution_graph.show()
         else:
             self.solution_graph.hide()
 
+    def displayEulerGraph(self):
+        if self.euler.isChecked():
+            self.updateEulerGraph()
+            self.eulerGraph.show()
+        else:
+            self.eulerGraph.hide()
 
 
 def main():
@@ -70,4 +94,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

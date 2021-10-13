@@ -1,3 +1,1 @@
-from NumericalMethods import NumericalMethods
-
-class RungeKutta(NumericalMethods):
+class RungeKutta:
