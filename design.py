@@ -28,15 +28,19 @@ class Ui_MainWindow(object):
         self.solution = QtWidgets.QCheckBox(self.page1)
         self.solution.setGeometry(QtCore.QRect(1300, 30, 85, 20))
         self.solution.setObjectName("solution")
+        self.solution.setStyleSheet("QCheckBox { color: red }")
         self.euler = QtWidgets.QCheckBox(self.page1)
         self.euler.setGeometry(QtCore.QRect(1300, 60, 85, 20))
         self.euler.setObjectName("euler")
+        self.euler.setStyleSheet("QCheckBox { color: rgb(0, 100, 0) }")
         self.improvedEuler = QtWidgets.QCheckBox(self.page1)
         self.improvedEuler.setGeometry(QtCore.QRect(1300, 90, 111, 20))
         self.improvedEuler.setObjectName("improvedEuler")
+        self.improvedEuler.setStyleSheet("QCheckBox { color: rgb(0, 0, 255) }")
         self.rungeKutta = QtWidgets.QCheckBox(self.page1)
         self.rungeKutta.setGeometry(QtCore.QRect(1300, 120, 111, 20))
         self.rungeKutta.setObjectName("rungeKutta")
+        self.rungeKutta.setStyleSheet("QCheckBox { color: rgb(222, 151, 11) }")
         self.n_var = QtWidgets.QLineEdit(self.page1)
         self.n_var.setGeometry(QtCore.QRect(30, 30, 41, 20))
         self.n_var.setObjectName("n_var")
@@ -125,7 +129,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Computational practicum by Safina Alina, B20-02 group"))
         self.solution.setText(_translate("MainWindow", "y(x)"))
         self.euler.setText(_translate("MainWindow", "Euler"))
         self.improvedEuler.setText(_translate("MainWindow", "Improved Euler"))
