@@ -22,32 +22,41 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.euler.stateChanged.connect(self.displayEulerGraph)
         self.improvedEuler.stateChanged.connect(self.displayImprovedEulerGraph)
         self.rungeKutta.stateChanged.connect(self.displayRungeKuttaGraph)
-
-
+        self.euler_error.stateChanged.connect(self.displayEulerErrorGraph)
+        self.improvedEuler_error.stateChanged.connect(self.displayImprovedEulerErrorGraph)
+        self.rungeKutta_error.stateChanged.connect(self.displayRungeKuttaErrorGraph)
 
         # text boxes changing
         self.x0_var.textChanged.connect(self.updateSolutionGraph)
         self.x0_var.textChanged.connect(self.updateEulerGraph)
         self.x0_var.textChanged.connect(self.updateImprovedEulerGraph)
         self.x0_var.textChanged.connect(self.updateRungeKuttaGraph)
-
+        self.x0_var.textChanged.connect(self.updateEulerErrorGraph)
+        self.x0_var.textChanged.connect(self.updateImprovedEulerErrorGraph)
+        self.x0_var.textChanged.connect(self.displayRungeKuttaErrorGraph)
 
         self.y0_var.textChanged.connect(self.updateSolutionGraph)
         self.y0_var.textChanged.connect(self.updateEulerGraph)
         self.y0_var.textChanged.connect(self.updateImprovedEulerGraph)
         self.y0_var.textChanged.connect(self.updateRungeKuttaGraph)
-
+        self.y0_var.textChanged.connect(self.updateEulerErrorGraph)
+        self.y0_var.textChanged.connect(self.updateImprovedEulerErrorGraph)
+        self.y0_var.textChanged.connect(self.updateRungeKuttaErrorGraph)
 
         self.n_var.textChanged.connect(self.updateEulerGraph)
         self.n_var.textChanged.connect(self.updateImprovedEulerGraph)
         self.n_var.textChanged.connect(self.updateRungeKuttaGraph)
-
+        self.n_var.textChanged.connect(self.updateEulerErrorGraph)
+        self.n_var.textChanged.connect(self.updateImprovedEulerErrorGraph)
+        self.n_var.textChanged.connect(self.updateRungeKuttaErrorGraph)
 
         self.b_var.textChanged.connect(self.updateEulerGraph)
         self.b_var.textChanged.connect(self.updateSolutionGraph)
         self.b_var.textChanged.connect(self.updateImprovedEulerGraph)
         self.b_var.textChanged.connect(self.updateRungeKuttaGraph)
-
+        self.b_var.textChanged.connect(self.updateEulerErrorGraph)
+        self.b_var.textChanged.connect(self.updateImprovedEulerErrorGraph)
+        self.b_var.textChanged.connect(self.updateRungeKuttaErrorGraph)
 
     def setGraphs(self):
         self.redPen = pg.mkPen(color=(255, 0, 0), width= 3)
@@ -60,12 +69,17 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
         eulerGraph = Euler(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text())
         self.eulerGraph = self.graphWidget1.plot(eulerGraph.x, eulerGraph.y, pen = self.greenPen)
+        self.eulerErrorGraph = self.graphWidget2.plot(eulerGraph.x, eulerGraph.t, pen = self.greenPen)
+
 
         improvedEulerGraph  = ImprovedEuler(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text())
         self.improvedEulerGraph = self.graphWidget1.plot(improvedEulerGraph.x, improvedEulerGraph.y, pen = self.bluePen)
+        self.improvedEulerErrorGraph = self.graphWidget2.plot(improvedEulerGraph.x, improvedEulerGraph.t, pen = self.bluePen)
+
 
         rungeKuttaGraph = RungeKutta(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text())
         self.rungeKuttaGraph = self.graphWidget1.plot(rungeKuttaGraph.x, rungeKuttaGraph.y, pen = self.yellowPen)
+        self.rungeKuttaErrorGraph = self.graphWidget2.plot(rungeKuttaGraph.x, rungeKuttaGraph.t, pen = self.yellowPen)
 
 
     def setWidgets(self):
@@ -112,6 +126,13 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         if (self.euler.isChecked()):
             self.eulerGraph = self.graphWidget1.plot(eulerGraph.x, eulerGraph.y,  pen = self.greenPen)
 
+    def updateEulerErrorGraph(self):
+        exactSolution = ExactSolution(self.x0_var.text(), self.y0_var.text(), self.b_var.text())
+        eulerGraph = Euler(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text())
+        self.eulerErrorGraph.clear()
+        if (self.euler_error.isChecked()):
+            self.eulerErrorGraph = self.graphWidget2.plot(eulerGraph.x, eulerGraph.t, pen=self.greenPen)
+
     def updateImprovedEulerGraph(self):
         exactSolution = ExactSolution(self.x0_var.text(), self.y0_var.text(), self.b_var.text())
         improvedEulerGraph = ImprovedEuler(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text())
@@ -119,12 +140,26 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         if (self.improvedEuler.isChecked()):
             self.improvedEulerGraph = self.graphWidget1.plot(improvedEulerGraph.x, improvedEulerGraph.y, pen = self.bluePen)
 
+    def updateImprovedEulerErrorGraph(self):
+        exactSolution = ExactSolution(self.x0_var.text(), self.y0_var.text(), self.b_var.text())
+        improvedEulerGraph = ImprovedEuler(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text())
+        self.improvedEulerErrorGraph.clear()
+        if (self.improvedEuler_error.isChecked()):
+            self.improvedEulerErrorGraph = self.graphWidget2.plot(improvedEulerGraph.x, improvedEulerGraph.t, pen = self.bluePen)
+
     def updateRungeKuttaGraph(self):
         exactSolution = ExactSolution(self.x0_var.text(), self.y0_var.text(), self.b_var.text())
         rungeKuttaGraph = RungeKutta(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text())
         self.rungeKuttaGraph.clear()
         if (self.rungeKutta.isChecked()):
             self.rungeKuttaGraph = self.graphWidget1.plot(rungeKuttaGraph.x, rungeKuttaGraph.y, pen = self.yellowPen)
+
+    def updateRungeKuttaErrorGraph(self):
+        exactSolution = ExactSolution(self.x0_var.text(), self.y0_var.text(), self.b_var.text())
+        rungeKuttaGraph = RungeKutta(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text())
+        self.rungeKuttaErrorGraph.clear()
+        if (self.rungeKutta_error.isChecked()):
+            self.rungeKuttaErrorGraph = self.graphWidget2.plot(rungeKuttaGraph.x, rungeKuttaGraph.t, pen = self.yellowPen)
 
 
     def displaySolutionGraph(self):
@@ -141,6 +176,13 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         else:
             self.eulerGraph.hide()
 
+    def displayEulerErrorGraph(self):
+        if self.euler_error.isChecked():
+            self.updateEulerErrorGraph()
+            self.eulerErrorGraph.show()
+        else:
+            self.eulerErrorGraph.hide()
+
     def displayImprovedEulerGraph(self):
         if self.improvedEuler.isChecked():
             self.updateImprovedEulerGraph()
@@ -148,12 +190,26 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         else:
             self.improvedEulerGraph.hide()
 
+    def displayImprovedEulerErrorGraph(self):
+        if self.improvedEuler_error.isChecked():
+            self.updateImprovedEulerErrorGraph()
+            self.improvedEulerErrorGraph.show()
+        else:
+            self.improvedEulerErrorGraph.hide()
+
     def displayRungeKuttaGraph(self):
         if self.rungeKutta.isChecked():
             self.updateRungeKuttaGraph()
             self.rungeKuttaGraph.show()
         else:
             self.rungeKuttaGraph.hide()
+
+    def displayRungeKuttaErrorGraph(self):
+        if self.rungeKutta_error.isChecked():
+            self.updateRungeKuttaErrorGraph()
+            self.rungeKuttaErrorGraph.show()
+        else:
+            self.rungeKuttaErrorGraph.hide()
 
 
 def main():

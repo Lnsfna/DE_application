@@ -16,3 +16,6 @@ class RungeKutta(NumericalMethods):
 
             self.y.append(self.y[i-1] + (self.h / 6) * (f1 + 2*f2 + 2*f3 + f4))
             self.x.append(self.x[i-1] + self.h)
+        self.errorCalculation()
+
+

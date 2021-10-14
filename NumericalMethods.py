@@ -1,3 +1,8 @@
+import math
+
+import numpy
+
+
 class NumericalMethods:
     def __init__(self, x0,y0, b, n):
         if(x0 == ""):
@@ -26,3 +31,13 @@ class NumericalMethods:
         self.y = []
         self.x.append(self.x0)
         self.y.append(self.y0)
+        self.t = []
+        self.t.append(0)
+
+
+    def errorCalculation(self):
+        c = self.x0 - pow(math.e, -(self.y0 / self.x0))
+        for i in range(self.n):
+           # y = (-1*self.x[i] * numpy.log(self.x[i] - c))
+            t = abs((-1*self.x[i+1] * numpy.log(self.x[i+1] - c)) - self.y[i+1] - self.h * (self.y[i+1]/self.x[i+1]) - self.x[i+1]* pow(math.e, (self.y[i+1]/self.x[i+1])))
+            self.t.append(t)

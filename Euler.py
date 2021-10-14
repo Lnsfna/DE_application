@@ -9,6 +9,12 @@ class Euler(NumericalMethods):
             f = (self.y[i-1]/self.x[i-1]) - self.x[i-1]* pow(math.e, (self.y[i-1]/self.x[i-1]))
             self.y.append(self.y[i-1] + self.h * f)
             self.x.append(self.x[i-1] + self.h)
+        self.errorCalculation()
+
+
+
+
+
 
 
 

@@ -1,5 +1,7 @@
 import math
 
+import numpy
+
 from NumericalMethods import NumericalMethods
 
 class ImprovedEuler(NumericalMethods):
@@ -11,3 +13,5 @@ class ImprovedEuler(NumericalMethods):
                  pow(math.e, ((self.y[i-1] + self.h * f1)/ (self.x[i-1] + self.h)))
             self.y.append(self.y[i-1] + (self.h / 2) * (f1 + f2))
             self.x.append(self.x[i-1] + self.h)
+        self.errorCalculation()
+
