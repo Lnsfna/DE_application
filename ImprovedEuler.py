@@ -5,13 +5,24 @@ import numpy
 from NumericalMethods import NumericalMethods
 
 class ImprovedEuler(NumericalMethods):
-    def __init__(self, x0,y0, b, n):
-        super().__init__( x0,y0, b, n)
-        for i in range (1, self.n + 1):
-            f1 = (self.y[i-1]/self.x[i-1]) - self.x[i-1]* pow(math.e, (self.y[i-1]/self.x[i-1]))
-            f2 = ((self.y[i-1] + self.h * f1)/ (self.x[i-1] + self.h)) - (self.x[i-1] + self.h) *\
-                 pow(math.e, ((self.y[i-1] + self.h * f1)/ (self.x[i-1] + self.h)))
-            self.y.append(self.y[i-1] + (self.h / 2) * (f1 + f2))
-            self.x.append(self.x[i-1] + self.h)
+    def __init__(self, x0,y0, b, n, n0, N):
+        super().__init__( x0,y0, b, n, n0, N)
+        self.x, self.y = self.calculateFunction(self.h,self.n)
         self.errorCalculation()
+        self.maxErrors(self.calculateFunction)
+
+    def calculateFunction(self, h,n):
+        x = []
+        y = []
+        x.append(self.x0)
+        y.append(self.y0)
+        for i in range (1, n + 1):
+            f1 = (y[i-1]/x[i-1]) - x[i-1]* pow(math.e, (y[i-1]/x[i-1]))
+            f2 = ((y[i-1] + h * f1)/ (x[i-1] + h)) - (x[i-1] + h) *\
+                 pow(math.e, ((y[i-1] + h * f1)/ (x[i-1] + h)))
+            y.append(y[i-1] + (h / 2) * (f1 + f2))
+            x.append(x[i-1] + h)
+        return x,y
+
+
 

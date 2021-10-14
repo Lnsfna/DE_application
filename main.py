@@ -17,7 +17,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.setWidgets()
         self.setGraphs()
 
-        # checkboxes changing
+        # checkboxes changing tracking
         self.solution.stateChanged.connect(self.displaySolutionGraph)
         self.euler.stateChanged.connect(self.displayEulerGraph)
         self.improvedEuler.stateChanged.connect(self.displayImprovedEulerGraph)
@@ -25,8 +25,11 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.euler_error.stateChanged.connect(self.displayEulerErrorGraph)
         self.improvedEuler_error.stateChanged.connect(self.displayImprovedEulerErrorGraph)
         self.rungeKutta_error.stateChanged.connect(self.displayRungeKuttaErrorGraph)
+        self.Euler_MaxError.stateChanged.connect(self.displayEulerMaxErrorGraph)
+        self.improvedEuler_MaxError.stateChanged.connect(self.displayImprovedEulerMaxErrorGraph)
+        self.RungeKutta_MaxError.stateChanged.connect(self.displayRungeKuttaMaxErrorGraph)
 
-        # text boxes changing
+        # text boxes changing (input) tracking
         self.x0_var.textChanged.connect(self.updateSolutionGraph)
         self.x0_var.textChanged.connect(self.updateEulerGraph)
         self.x0_var.textChanged.connect(self.updateImprovedEulerGraph)
@@ -58,6 +61,16 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.b_var.textChanged.connect(self.updateImprovedEulerErrorGraph)
         self.b_var.textChanged.connect(self.updateRungeKuttaErrorGraph)
 
+        self.n0_var.textChanged.connect(self.updateEulerMaxErrorGraph)
+        self.n0_var.textChanged.connect(self.updateRungeKuttaMaxErrorGraph)
+        self.n0_var.textChanged.connect(self.updateImprovedEulerMaxErrorGraph)
+
+        self.N_var.textChanged.connect(self.updateEulerMaxErrorGraph)
+        self.N_var.textChanged.connect(self.updateRungeKuttaMaxErrorGraph)
+        self.N_var.textChanged.connect(self.updateImprovedEulerMaxErrorGraph)
+
+
+    # setting graphs with default initial conditions
     def setGraphs(self):
         self.redPen = pg.mkPen(color=(255, 0, 0), width= 3)
         self.greenPen = pg.mkPen(color=(0, 100, 0), width= 3)
@@ -67,21 +80,23 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         exactSolution = ExactSolution(self.x0_var.text(), self.y0_var.text(), self.b_var.text())
         self.solutionGraph = self.graphWidget1.plot(exactSolution.x, exactSolution.y, pen = self.redPen)
 
-        eulerGraph = Euler(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text())
+        eulerGraph = Euler(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text(), self.n0_var.text(), self.N_var.text())
         self.eulerGraph = self.graphWidget1.plot(eulerGraph.x, eulerGraph.y, pen = self.greenPen)
         self.eulerErrorGraph = self.graphWidget2.plot(eulerGraph.x, eulerGraph.t, pen = self.greenPen)
+        self.eulerMaxErrorGraph = self.graphWidget3.plot(eulerGraph.maxErrors_x, eulerGraph.max_t, pen = self.greenPen)
 
-
-        improvedEulerGraph  = ImprovedEuler(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text())
+        improvedEulerGraph  = ImprovedEuler(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text(),self.n0_var.text(), self.N_var.text())
         self.improvedEulerGraph = self.graphWidget1.plot(improvedEulerGraph.x, improvedEulerGraph.y, pen = self.bluePen)
         self.improvedEulerErrorGraph = self.graphWidget2.plot(improvedEulerGraph.x, improvedEulerGraph.t, pen = self.bluePen)
+        self.improvedEulerMaxErrorGraph = self.graphWidget3.plot(improvedEulerGraph.maxErrors_x, improvedEulerGraph.max_t, pen = self.bluePen)
 
-
-        rungeKuttaGraph = RungeKutta(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text())
+        rungeKuttaGraph = RungeKutta(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text(),self.n0_var.text(), self.N_var.text())
         self.rungeKuttaGraph = self.graphWidget1.plot(rungeKuttaGraph.x, rungeKuttaGraph.y, pen = self.yellowPen)
         self.rungeKuttaErrorGraph = self.graphWidget2.plot(rungeKuttaGraph.x, rungeKuttaGraph.t, pen = self.yellowPen)
+        self.rungeKuttaMaxErrorGraph = self.graphWidget3.plot(rungeKuttaGraph.maxErrors_x, rungeKuttaGraph.max_t, pen = self.yellowPen)
 
 
+# setting widgets for app
     def setWidgets(self):
         vBox1 = self.verticalLayout_pg1
         vBox2 = self.verticalLayout_pg2
@@ -112,7 +127,11 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.euler_error.setChecked(True)
         self.improvedEuler_error.setChecked(True)
         self.rungeKutta_error.setChecked(True)
+        self.Euler_MaxError.setChecked(True)
+        self.improvedEuler_MaxError.setChecked(True)
+        self.RungeKutta_MaxError.setChecked(True)
 
+# Graph updating functions
     def updateSolutionGraph(self):
         exactSolution = ExactSolution(self.x0_var.text(), self.y0_var.text(), self.b_var.text())
         self.solutionGraph.clear()
@@ -121,47 +140,70 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
     def updateEulerGraph(self):
         exactSolution = ExactSolution(self.x0_var.text(), self.y0_var.text(), self.b_var.text())
-        eulerGraph = Euler(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text())
+        eulerGraph = Euler(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text(), self.n0_var.text(), self.N_var.text())
         self.eulerGraph.clear()
         if (self.euler.isChecked()):
             self.eulerGraph = self.graphWidget1.plot(eulerGraph.x, eulerGraph.y,  pen = self.greenPen)
 
     def updateEulerErrorGraph(self):
         exactSolution = ExactSolution(self.x0_var.text(), self.y0_var.text(), self.b_var.text())
-        eulerGraph = Euler(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text())
+        eulerGraph = Euler(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text(), self.n0_var.text(), self.N_var.text())
         self.eulerErrorGraph.clear()
         if (self.euler_error.isChecked()):
             self.eulerErrorGraph = self.graphWidget2.plot(eulerGraph.x, eulerGraph.t, pen=self.greenPen)
 
+    def updateEulerMaxErrorGraph(self):
+        exactSolution = ExactSolution(self.x0_var.text(), self.y0_var.text(), self.b_var.text())
+        eulerGraph = Euler(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text(), self.n0_var.text(), self.N_var.text())
+        self.eulerMaxErrorGraph.clear()
+        if (self.Euler_MaxError.isChecked()):
+            self.eulerMaxErrorGraph = self.graphWidget3.plot(eulerGraph.maxErrors_x, eulerGraph.max_t,pen=self.greenPen)
+
     def updateImprovedEulerGraph(self):
         exactSolution = ExactSolution(self.x0_var.text(), self.y0_var.text(), self.b_var.text())
-        improvedEulerGraph = ImprovedEuler(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text())
+        improvedEulerGraph = ImprovedEuler(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text(), self.n0_var.text(), self.N_var.text())
         self.improvedEulerGraph.clear()
         if (self.improvedEuler.isChecked()):
             self.improvedEulerGraph = self.graphWidget1.plot(improvedEulerGraph.x, improvedEulerGraph.y, pen = self.bluePen)
 
     def updateImprovedEulerErrorGraph(self):
         exactSolution = ExactSolution(self.x0_var.text(), self.y0_var.text(), self.b_var.text())
-        improvedEulerGraph = ImprovedEuler(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text())
+        improvedEulerGraph = ImprovedEuler(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text(), self.n0_var.text(), self.N_var.text())
         self.improvedEulerErrorGraph.clear()
         if (self.improvedEuler_error.isChecked()):
             self.improvedEulerErrorGraph = self.graphWidget2.plot(improvedEulerGraph.x, improvedEulerGraph.t, pen = self.bluePen)
 
+    def updateImprovedEulerMaxErrorGraph(self):
+        exactSolution = ExactSolution(self.x0_var.text(), self.y0_var.text(), self.b_var.text())
+        improvedEulerGraph = ImprovedEuler(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text(), self.n0_var.text(), self.N_var.text())
+        self.improvedEulerMaxErrorGraph.clear()
+        if (self.improvedEuler_MaxError.isChecked()):
+            self.improvedEulerMaxErrorGraph = self.graphWidget3.plot(improvedEulerGraph.maxErrors_x,improvedEulerGraph.max_t, pen=self.bluePen)
+
     def updateRungeKuttaGraph(self):
         exactSolution = ExactSolution(self.x0_var.text(), self.y0_var.text(), self.b_var.text())
-        rungeKuttaGraph = RungeKutta(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text())
+        rungeKuttaGraph = RungeKutta(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text(), self.n0_var.text(), self.N_var.text())
         self.rungeKuttaGraph.clear()
         if (self.rungeKutta.isChecked()):
             self.rungeKuttaGraph = self.graphWidget1.plot(rungeKuttaGraph.x, rungeKuttaGraph.y, pen = self.yellowPen)
 
     def updateRungeKuttaErrorGraph(self):
         exactSolution = ExactSolution(self.x0_var.text(), self.y0_var.text(), self.b_var.text())
-        rungeKuttaGraph = RungeKutta(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text())
+        rungeKuttaGraph = RungeKutta(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text(), self.n0_var.text(), self.N_var.text())
         self.rungeKuttaErrorGraph.clear()
         if (self.rungeKutta_error.isChecked()):
             self.rungeKuttaErrorGraph = self.graphWidget2.plot(rungeKuttaGraph.x, rungeKuttaGraph.t, pen = self.yellowPen)
 
+    def updateRungeKuttaMaxErrorGraph(self):
+        exactSolution = ExactSolution(self.x0_var.text(), self.y0_var.text(), self.b_var.text())
+        rungeKuttaGraph = RungeKutta(exactSolution.x0, exactSolution.y0, self.b_var.text(), self.n_var.text(),
+                                     self.n0_var.text(), self.N_var.text())
+        self.rungeKuttaMaxErrorGraph.clear()
+        if (self.RungeKutta_MaxError.isChecked()):
+            self.rungeKuttaMaxErrorGraph = self.graphWidget3.plot(rungeKuttaGraph.maxErrors_x, rungeKuttaGraph.max_t,
+                                                                  pen=self.yellowPen)
 
+    # Displaying graphs Functions
     def displaySolutionGraph(self):
         if self.solution.isChecked():
             self.updateSolutionGraph()
@@ -183,6 +225,13 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         else:
             self.eulerErrorGraph.hide()
 
+    def displayEulerMaxErrorGraph(self):
+        if self.Euler_MaxError.isChecked():
+            self.updateEulerMaxErrorGraph()
+            self.eulerMaxErrorGraph.show()
+        else:
+            self.eulerMaxErrorGraph.hide()
+
     def displayImprovedEulerGraph(self):
         if self.improvedEuler.isChecked():
             self.updateImprovedEulerGraph()
@@ -197,6 +246,13 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         else:
             self.improvedEulerErrorGraph.hide()
 
+    def displayImprovedEulerMaxErrorGraph(self):
+        if self.improvedEuler_MaxError.isChecked():
+            self.updateImprovedEulerMaxErrorGraph()
+            self.improvedEulerMaxErrorGraph.show()
+        else:
+            self.improvedEulerMaxErrorGraph.hide()
+
     def displayRungeKuttaGraph(self):
         if self.rungeKutta.isChecked():
             self.updateRungeKuttaGraph()
@@ -210,6 +266,13 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             self.rungeKuttaErrorGraph.show()
         else:
             self.rungeKuttaErrorGraph.hide()
+
+    def displayRungeKuttaMaxErrorGraph(self):
+        if self.RungeKutta_MaxError.isChecked():
+            self.updateRungeKuttaMaxErrorGraph()
+            self.rungeKuttaMaxErrorGraph.show()
+        else:
+            self.rungeKuttaMaxErrorGraph.hide()
 
 
 def main():
