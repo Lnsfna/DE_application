@@ -16,7 +16,7 @@ class NumericalMethods:
         else:
             self.b = int(b)
         if (n == ""):
-            self.n = 8
+            self.n = 10
         else:
             self.n = int(n)
         if (y0 == ""):
@@ -28,7 +28,7 @@ class NumericalMethods:
         else:
             self.n0 = int(n0)
         if (N == ""):
-            self.N = 8
+            self.N = 10
         else:
             self.N = int(N)
 
