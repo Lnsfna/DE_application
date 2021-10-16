@@ -46,7 +46,8 @@ class NumericalMethods:
     def errorCalculation(self):
         c = self.x0 - pow(math.e, -(self.y0 / self.x0))
         for i in range(self.n):
-            t = abs((-1*self.x[i+1] * numpy.log(self.x[i+1] - c)) - self.y[i+1] - self.h * (self.y[i+1]/self.x[i+1]) - self.x[i+1]* pow(math.e, (self.y[i+1]/self.x[i+1])))
+            t = abs((-1*self.x[i+1] * numpy.log(self.x[i+1] - c)) - self.y[i+1] - self.h *
+                    (self.y[i+1]/self.x[i+1]) - self.x[i+1]* pow(math.e, (self.y[i+1]/self.x[i+1])))
             self.t.append(t)
 
     def maxErrors(self,f):

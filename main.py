@@ -98,26 +98,22 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
 # setting widgets for app
     def setWidgets(self):
-        vBox1 = self.verticalLayout_pg1
-        vBox2 = self.verticalLayout_pg2
-        vBox3 = self.verticalLayout_pg3
-
         self.graphWidget1 = pg.PlotWidget()
         self.graphWidget1.showGrid(x=True, y=True)
         self.graphWidget1.setBackground('k')
-        vBox1.addWidget(self.graphWidget1)
+        self.verticalLayout_pg1.addWidget(self.graphWidget1)
         self.graphWidget1.plot()
 
         self.graphWidget2 = pg.PlotWidget()
         self.graphWidget2.showGrid(x=True, y=True)
         self.graphWidget2.setBackground('k')
-        vBox2.addWidget(self.graphWidget2)
+        self.verticalLayout_pg2.addWidget(self.graphWidget2)
         self.graphWidget2.plot()
 
         self.graphWidget3 = pg.PlotWidget()
         self.graphWidget3.showGrid(x=True, y=True)
         self.graphWidget3.setBackground('k')
-        vBox3.addWidget(self.graphWidget3)
+        self.verticalLayout_pg3.addWidget(self.graphWidget3)
         self.graphWidget3.plot()
 
         self.solution.setChecked(True)
